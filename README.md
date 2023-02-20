@@ -12,5 +12,4 @@ git clone https://github.com/hehno123/hehsniff
 cd hehsniff
 chmod +x install.sh
 sudo ./install.sh
-./install.sh
 ```
