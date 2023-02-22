@@ -152,12 +152,8 @@ int main(int argc, char **argv)
 void packet_handler(u_char *user, const struct pcap_pkthdr *header, const u_char* packet)
 {
         struct ether_header* eptr;
-	//struct ip* ip_hdr;
-        //struct icmp* icmp_hdr;
-        
 	eptr = (struct ether_header*) packet;
-        //ip_hdr = (struct ip*)(packet + 14);
-        //icmp_hdr = (struct icmp*)(packet + 14 + ip_hdr->ip_hl * 4);
+       
         u_char *ptr;
 	ptr = eptr->ether_dhost;
         int i = ETHER_ADDR_LEN;
@@ -173,7 +169,8 @@ void packet_handler(u_char *user, const struct pcap_pkthdr *header, const u_char
         ptr = eptr->ether_shost;
         i = ETHER_ADDR_LEN;
         printf("Send address: ");
-        do{
+        do
+	{
                printf("%s%x",(i == ETHER_ADDR_LEN) ? " " : ":",*ptr++);
         }while(--i>0);
 	
@@ -194,18 +191,6 @@ void packet_handler(u_char *user, const struct pcap_pkthdr *header, const u_char
 
 	printf("\n");
 
-	/*printf("Source Ip address: %s\n", inet_ntoa((struct in_addr)ip_hdr->ip_src));
-	printf("Destination Ip address: %s\n", inet_ntoa((struct in_addr)ip_hdr->ip_dst));
-
-	if(icmp_hdr->icmp_type == ICMP_ECHOREPLY)
-	{
-		printf("ICMP: echo reply (%i) \n\n", icmp_hdr->icmp_type);
-	}
-
-	if(icmp_hdr->icmp_type == ICMP_ECHO)
-	{
-		printf("ICMP: echo send (%i) \n\n", icmp_hdr->icmp_type);
-	}*/
 }
 
 
