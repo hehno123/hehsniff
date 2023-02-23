@@ -12,6 +12,7 @@
 #include <stdbool.h>
 #include "arp_header.h"
 #include "ip4_header.h"
+#include "addresses.h"
 
 void packet_handler(u_char *user, const struct pcap_pkthdr *header, const u_char* packet);
 
@@ -154,26 +155,12 @@ void packet_handler(u_char *user, const struct pcap_pkthdr *header, const u_char
         struct ether_header* eptr;
 	eptr = (struct ether_header*) packet;
        
-        u_char *ptr;
-	ptr = eptr->ether_dhost;
-        int i = ETHER_ADDR_LEN;
-        
         printf("2 LAYER: ");	
 	printf("Dest address: ");
-        do
-	{
-               printf("%s%x",(i == ETHER_ADDR_LEN) ? " " : ":",*ptr++);
-	} while(--i>0);
-        printf(", ");
-
-        ptr = eptr->ether_shost;
-        i = ETHER_ADDR_LEN;
-        printf("Send address: ");
-        do
-	{
-               printf("%s%x",(i == ETHER_ADDR_LEN) ? " " : ":",*ptr++);
-        }while(--i>0);
+        print_mac(eptr->ether_dhost);
 	
+        printf("Send address: ");
+        print_mac(eptr->ether_shost);
   	printf(", ");
         
 	if(eptr->ether_type == 1544)
@@ -190,7 +177,6 @@ void packet_handler(u_char *user, const struct pcap_pkthdr *header, const u_char
 	}
 
 	printf("\n");
-
 }
 
 
