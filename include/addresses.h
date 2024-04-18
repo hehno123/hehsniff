@@ -9,6 +9,7 @@ void get_mac_interface(char*, unsigned char*);
 void get_broadcast_mac(unsigned char*);
 void print_mac(unsigned char*);
 void print_ip(unsigned char*);
+void print_ip6(unsigned short*);
 
 #endif
 

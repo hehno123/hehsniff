@@ -2,6 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "../include/hehlib.h"
+#include <cstdlib>
 
 void print_mac(unsigned char* mac)
 {
@@ -16,6 +17,14 @@ void print_ip(unsigned char* ip)
 	for (int i = 0; i < IP_SIZE; i++) {
                 const char* character = (i == 3) ? " " : "."; 
 		printf("%u%s", ip[i], character);
+	}
+}
+
+void print_ip6(unsigned short* ip)
+{
+	for(int i = 0; i < 8; i++) {
+		const char* character = (i == 7) ? " " : ":";
+		printf("%x%s", ip[i], character);
 	}
 }
 

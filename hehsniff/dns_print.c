@@ -131,17 +131,27 @@ void dns_print_message(const u_char* packet, unsigned short number)
 			ptr = (unsigned char*)(packet + number + DNS_HEADER_LEN + size_of_name_field);
 			
 			printf("	ANSWER %hu, type: %hu, name: %s, response: ", htons(ans.ans->rdlength), htons(ans.ans->rtype), ans.name);
-
+			
 			if(htons(ans.ans->rtype) == 1)
 			{
 				ans.rdata = (unsigned char*)calloc(htons(ans.ans->rdlength), 1);
-				for(int k = 0; k < 4; k++)
+				memcpy(ans.rdata, ptr, 4);
+				print_ip(ans.rdata);
+				printf("\n");
+			}
+			
+			if(htons(ans.ans->rtype) == 28)
+			{
+				ans.rdata = (unsigned char*)calloc(htons(ans.ans->rdlength), 1);
+				unsigned short* ipv6_addr = (unsigned short*)calloc(8, 2);
+				
+				for(int k = 0; k < 8; k++)
 				{
-					ans.rdata[k] = (unsigned int)(*ptr);
-					ptr++;
+					ipv6_addr[k] = htons(*((unsigned short*)(ptr)));
+					ptr += 2;
 				}
 
-				print_ip(ans.rdata);
+				print_ip6(ipv6_addr);
 				printf("\n");
 			}
 

