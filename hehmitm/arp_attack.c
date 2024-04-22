@@ -50,6 +50,24 @@ void unspoofing(int signum)
        exit(0);
 }
 
+void remove_newline(char* string)
+{
+	if(strlen(string) == 0)
+	{
+		return;
+	}
+
+	else if(strlen(string) == 1 && string[0] == '\n')
+	{
+		return;
+	}
+
+	else if(string[strlen(string) - 1] == '\n')
+	{
+		string[strlen(string) - 1] = '\0';
+	}
+}
+	
 int main(int argc, char **argv)
 {
 	pcap_if_t *devices;
@@ -65,15 +83,18 @@ int main(int argc, char **argv)
 		
 	char device_name[80]; 
 	printf("On what device you want to capture: ");
-	scanf("%s", device_name);
+	fgets(device_name, 80, stdin);
+	remove_newline(device_name);
 
-	char victim_ip_str[80];
+	char victim_ip_str[20];
 	printf("Type victim ip: ");
-	scanf("%s", victim_ip_str);
+	fgets(victim_ip_str, 20, stdin);
+	remove_newline(victim_ip_str);
 
-	char gateway_ip_str[80];
+	char gateway_ip_str[20];
 	printf("Type gateway ip: ");
-	scanf("%s", gateway_ip_str);
+	fgets(gateway_ip_str, 20, stdin);
+	remove_newline(gateway_ip_str);
 
 	/* get ip address and subnet mask */
 	get_ip_interface(devices, device_name, &ip_address_of_device, &netmask_device);
@@ -89,6 +110,12 @@ int main(int argc, char **argv)
 	/* convert ip addresses in string to number format */
 	in_addr_t victim_ip_32 = inet_addr(victim_ip_str);
 	in_addr_t gateway_ip32 = inet_addr(gateway_ip_str);
+	
+	if(victim_ip_32 == -1 || gateway_ip32 == -1)
+	{
+		fprintf(stderr, "Bad format of ip address\n");
+		exit(1);
+	}
 
 	/* change variable types to unsigned char* */
         memcpy(victim_ip, &victim_ip_32, IP_SIZE);

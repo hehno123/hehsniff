@@ -38,7 +38,7 @@ void get_ip_interface(pcap_if_t *devices, char* interface_name, bpf_u_int32* ip_
         /* this loop is searching all interfaces. If interface name is equal to interface that is used in program, we can get ip address and subnet mask */
         for (pcap_if_t *d = devices; d != NULL; d=d->next) {
                 bool isFind = false;
-
+		
                 if (strcmp(d->name, interface_name) == 0) {
                         for (pcap_addr_t *a = d->addresses; a != NULL; a=a->next) {
                                 if (a->addr->sa_family == AF_INET) {
